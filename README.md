@@ -1,46 +1,45 @@
-# Slack Channel Archive Implementation Guide
+# Slack Channel Archive Tool
 
-## Overview
-Implementation of automated Slack channel archival system to remove 2,173 inactive channels from workspace based on strict acceptance criteria.
+Production-ready tool for bulk archiving inactive Slack channels based on CSV lists.
 
-## Acceptance Criteria Compliance
+## Features
 
-### Channel Selection Criteria
-- Maximum of 4 members per channel
-- No activity between July 2, 2025 and August 2, 2025
-- Data sourced from official Slack admin console export
+- ✅ **Tested & Verified**: Archive logic tested on live channels
+- 🛡️ **Safe Operations**: Dry-run mode and comprehensive error handling
+- 📊 **Progress Tracking**: Real-time progress with detailed logging
+- ⚡ **Rate Limited**: Prevents API throttling with built-in delays
+- 🔍 **Channel Lookup**: Automatic ID resolution from channel exports
 
-### Exclusion Rules
-- Private channels automatically excluded
-- System channels protected (general, compliance, announcements)
-- Business-critical channels preserved
+## Prerequisites
 
-### Notification Requirements
-- 3-day advance notice posted to Team-Tech channel
-- ITOps contact mechanism for opt-out requests
-- Clear documentation of affected channels
+- Bash shell environment
+- `jq` command-line JSON processor
+- `curl` for API requests
+- Slack user token with required scopes:
+  - `channels:write` (for public channels)
+  - `groups:write` (for private channels)
+  - `channels:read` (to read channel info)
 
-## Technical Implementation
+## Quick Start
 
-### Architecture
-- Python 3.x with slack-sdk library
-- CSV-based data processing
-- REST API integration via WebClient
-- Comprehensive logging system
+1. **Set your Slack token:**
+   ```bash
+   export SLACK_TOKEN=xoxp-your-token-here
+   ```
 
-### Key Features
-- Batch processing (50 channels per batch)
-- Dry run capability for testing
-- Real-time validation before archival
-- Automatic retry with exponential backoff
-- Full audit trail logging
+2. **Prepare your files:**
+   - `channels_to_archive.csv` - List of channels to archive
+   - `channels_export.csv` - Full channel export with IDs
 
-### Safety Mechanisms
-- Archive only (no deletion)
-- Skip already-archived channels
-- Member count verification
-- Permission validation
-- Rate limiting (0.5s between operations)
+3. **Run in dry-run mode first:**
+   ```bash
+   DRY_RUN=true ./archive_channels.sh channels_to_archive.csv channels_export.csv
+   ```
+
+4. **Execute the archive:**
+   ```bash
+   ./archive_channels.sh channels_to_archive.csv channels_export.csv
+   ```
 
 ## Execution Workflow
 
